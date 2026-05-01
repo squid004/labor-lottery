@@ -674,10 +674,18 @@
 
   function next10(data) {
     const now = getEasternNow();
-    return data
+    const withDt = data
       .map(e => ({ entry: e, dt: parseFullDatetime(e.date, e.time) }))
-      .filter(x => x.dt !== null && x.dt >= now)
-      .sort((a, b) => a.dt - b.dt)
+      .filter(x => x.dt !== null);
+
+    // Closest future guess sets the cutoff — past guesses farther than this are eliminated
+    const minFutureDist = withDt
+      .filter(x => x.dt >= now)
+      .reduce((min, x) => Math.min(min, x.dt - now), Infinity);
+
+    return withDt
+      .filter(x => x.dt >= now || (now - x.dt) < minFutureDist)
+      .sort((a, b) => Math.abs(a.dt - now) - Math.abs(b.dt - now))
       .slice(0, 10)
       .map(x => x.entry);
   }
