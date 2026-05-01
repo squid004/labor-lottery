@@ -8,8 +8,8 @@
 <style>
   :root {
     --cream: #E8F7F5;
-    --dark: #0B2D4E;
-    --gold: #FF6F61;
+    --dark: #1B4040;
+    --gold: #FF8878;
     --gold-light: #FFB3AB;
     --red: #E84855;
     --green: #0B7A6E;
@@ -42,11 +42,11 @@
     inset: 0;
     background-image: repeating-linear-gradient(
       0deg, transparent, transparent 40px,
-      rgba(255,111,97,0.08) 40px, rgba(255,111,97,0.08) 41px
+      rgba(255,136,120,0.08) 40px, rgba(255,136,120,0.08) 41px
     ),
     repeating-linear-gradient(
       90deg, transparent, transparent 40px,
-      rgba(255,111,97,0.08) 40px, rgba(255,111,97,0.08) 41px
+      rgba(255,136,120,0.08) 40px, rgba(255,136,120,0.08) 41px
     );
   }
 
@@ -94,7 +94,7 @@
     flex: 1;
     min-width: 200px;
     padding: 20px 28px;
-    border-right: 2px solid rgba(11,45,78,0.25);
+    border-right: 2px solid rgba(27,64,64,0.25);
     position: relative;
   }
 
@@ -105,7 +105,7 @@
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(11,45,78,0.6);
+    color: rgba(27,64,64,0.6);
     margin-bottom: 5px;
   }
 
@@ -252,7 +252,7 @@
   .cal-date {
     font-family: 'DM Mono', monospace;
     font-size: 12px;
-    color: rgba(11,45,78,0.4);
+    color: rgba(27,64,64,0.4);
     margin-bottom: 4px;
   }
 
@@ -325,7 +325,7 @@
   }
 
   tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: rgba(255,111,97,0.08); }
+  tbody tr:hover { background: rgba(255,136,120,0.08); }
 
   tbody td {
     padding: 12px 20px;
@@ -352,7 +352,7 @@
     padding: 48px;
     text-align: center;
     font-style: italic;
-    color: rgba(11,45,78,0.4);
+    color: rgba(27,64,64,0.4);
     font-size: 15px;
   }
 
@@ -384,7 +384,7 @@
   .faq-a {
     font-size: 14px;
     line-height: 1.6;
-    color: rgba(11,45,78,0.8);
+    color: rgba(27,64,64,0.8);
   }
 
   /* ── FOOTER ── */
@@ -408,7 +408,7 @@
     font-family: 'DM Mono', monospace;
     font-size: 12px;
     letter-spacing: 0.15em;
-    color: rgba(11,45,78,0.4);
+    color: rgba(27,64,64,0.4);
     text-transform: uppercase;
   }
 
@@ -435,7 +435,7 @@
     <p class="header-eyebrow">Est. 2026 · Pittsburgh, PA</p>
     <h1 class="header-title">Delivery<br><span>Derby</span></h1>
     <p class="header-subtitle">Wager on when Charlie will arrive!</p>
-    <p style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.12em;color:rgba(255,111,97,0.9);margin-top:-20px;margin-bottom:24px;">⚑ Betting closes May 31st or the moment we leave for the hospital — whichever comes first</p>
+    <p style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.12em;color:rgba(255,136,120,0.9);margin-top:-20px;margin-bottom:24px;">⚑ Betting closes May 31st or the moment we leave for the hospital — whichever comes first</p>
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSddP5wwhjyDBhAHshZdMHF76Ht-229nlDBVoOTiW3kDH5L6Gg/viewform" target="_blank" style="display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;background:var(--gold);color:var(--dark);padding:12px 36px;border-radius:4px;text-decoration:none;margin-bottom:40px;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Enter the Derby &rarr;</a>
   </div>
 </header>
@@ -714,7 +714,7 @@
     }
     tbody.innerHTML = data.map((e, i) => `
       <tr>
-        <td style="font-family:'DM Mono',monospace;font-size:12px;color:rgba(11,45,78,0.4)">${i + 1}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:12px;color:rgba(27,64,64,0.4)">${i + 1}</td>
         <td><strong>${e.name}</strong></td>
         <td>${formatDate(e.date)}</td>
         <td style="font-family:'DM Mono',monospace">${formatTime(e.time)}</td>
