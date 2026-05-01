@@ -561,42 +561,77 @@
   let entries = [];
   let currentMonth = new Date(2026, 5, 1);
 
-  function processEntries(data) {
-    entries = data;
-    updateStats(entries);
-    renderTable(entries);
-    renderCalendar(entries);
-    document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+  function splitCSVLine(line) {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { cols.push(cur); cur = ''; }
+      else { cur += ch; }
+    }
+    cols.push(cur);
+    return cols;
   }
 
-  // JSONP callback - Google calls this automatically
-  window.google = window.google || {};
-  window.google.visualization = window.google.visualization || {};
-  window.google.visualization.Query = window.google.visualization.Query || {};
-  window.google.visualization.Query.setResponse = function(res) {
-    try {
-      const rows = res.table.rows;
-      const result = [];
-      for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        if (!row.c) continue;
-        const name = row.c[0] && row.c[0].v != null ? String(row.c[0].v).trim() : '';
-        const date = row.c[1] && row.c[1].v != null ? String(row.c[1].v).trim() : '';
-        const time = row.c[2] && row.c[2].v != null ? String(row.c[2].v).trim() : '';
-        if (!name || !date || name.toLowerCase() === 'name') continue;
-        result.push({ name, date, time });
-      }
-      processEntries(result);
-    } catch(e) {
-      console.error('gviz error:', e);
+  function parseCSV(text) {
+    const lines = text.trim().split(/
+?
+/);
+    const result = [];
+    for (let i = 1; i < lines.length; i++) {
+      const cols = splitCSVLine(lines[i]);
+      const name = (cols[0] || '').trim();
+      const date = (cols[1] || '').trim();
+      const time = (cols[2] || '').trim();
+      if (!name || !date || name.toLowerCase() === 'name') continue;
+      result.push({ name, date, time });
     }
-  };
+    return result;
+  }
 
-  function loadData() {
-    const s = document.createElement('script');
-    s.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&t=' + Date.now();
-    s.onerror = function() { console.error('Script load failed'); };
-    document.head.appendChild(s);
+  async function loadData() {
+    const urls = [
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`,
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`
+    ];
+    for (const url of urls) {
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) continue;
+        const text = await res.text();
+        if (!text || text.includes('<!DOCTYPE')) continue;
+        entries = parseCSV(text);
+        updateStats(entries);
+        renderTable(entries);
+        renderCalendar(entries);
+        document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+        return;
+      } catch(e) {
+        console.warn('URL failed:', url, e);
+      }
+    }
+    // All fetches failed
+    document.getElementById('calendar-grid').innerHTML =
+      '<div class="loading" style="grid-column:1/-1">Could not load data. Make sure the sheet is shared publicly.</div>';
+    document.getElementById('entries-tbody').innerHTML =
+      '<tr><td colspan="4" class="no-entries">Could not load entries.</td></tr>';
+  }
+
+  function formatTime(timeStr) {
+    if (!timeStr || !timeStr.trim()) return '—';
+    const t = timeStr.trim();
+    // Google Sheets gviz returns times as decimals e.g. 0.125 = 3:00 AM
+    const num = parseFloat(t);
+    if (!isNaN(num) && num >= 0 && num < 1) {
+      const totalMins = Math.round(num * 24 * 60);
+      const hours24 = Math.floor(totalMins / 60);
+      const mins = totalMins % 60;
+      const ampm = hours24 < 12 ? 'AM' : 'PM';
+      const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+      return hours12 + ':' + String(mins).padStart(2, '0') + ' ' + ampm;
+    }
+    return t;
   }
 
   function parseEntryDate(dateStr) {
@@ -633,7 +668,7 @@
         <td style="font-family:'DM Mono',monospace;font-size:12px;color:rgba(26,18,8,0.4)">${i + 1}</td>
         <td><strong>${e.name}</strong></td>
         <td>${formatDate(e.date)}</td>
-        <td style="font-family:'DM Mono',monospace">${e.time || '—'}</td>
+        <td style="font-family:'DM Mono',monospace">${formatTime(e.time)}</td>
       </tr>
     `).join('');
   }
@@ -669,7 +704,7 @@
       if (isDue) cls += ' due-date';
       if (dayEntries.length) cls += ' has-entries';
       const entriesHtml = dayEntries.map(e =>
-        '<div class="cal-entry" title="' + e.name + ' — ' + (e.time||'TBD') + '">' + e.name + '</div>'
+        '<div class="cal-entry" title="' + e.name + ' — ' + (e.time || 'TBD') + '">' + e.name + '</div>'
       ).join('');
       const dueHtml = isDue ? '<div class="due-marker">Due date</div>' : '';
       html += '<div class="' + cls + '" data-count="' + dayEntries.length + '"><div class="cal-date">' + day + '</div><div class="cal-entries">' + dueHtml + entriesHtml + '</div></div>';
