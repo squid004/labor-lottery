@@ -496,7 +496,7 @@
   <!-- ENTRIES TABLE -->
   <section class="entries-section">
     <div class="section-header">
-      <h2 class="section-title">All Entries</h2>
+      <h2 class="section-title">10 Closest Entries</h2>
       <div class="section-line"></div>
     </div>
     <div class="table-wrap">
@@ -601,8 +601,8 @@
         if (!text || text.includes('<!DOCTYPE')) continue;
         entries = parseCSV(text);
         updateStats(entries);
-        renderTable(entries);
-        renderCalendar(entries);
+        renderTable(closest10(entries));
+        renderCalendar(closest10(entries));
         document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
         return;
       } catch(e) {
@@ -640,6 +640,46 @@
     d = new Date(cleaned);
     if (!isNaN(d.getTime())) return d;
     return null;
+  }
+
+  function getEasternNow() {
+    const now = new Date();
+    return new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  }
+
+  function parseTimeMinutes(timeStr) {
+    if (!timeStr || !timeStr.trim()) return null;
+    const t = timeStr.trim();
+    const num = parseFloat(t);
+    if (!isNaN(num) && num >= 0 && num < 1) return Math.round(num * 24 * 60);
+    const m = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+    if (m) {
+      let h = parseInt(m[1]);
+      const min = parseInt(m[2]);
+      const ampm = (m[3] || '').toUpperCase();
+      if (ampm === 'PM' && h !== 12) h += 12;
+      if (ampm === 'AM' && h === 12) h = 0;
+      return h * 60 + min;
+    }
+    return null;
+  }
+
+  function parseFullDatetime(dateStr, timeStr) {
+    const d = parseEntryDate(dateStr);
+    if (!d) return null;
+    const mins = parseTimeMinutes(timeStr);
+    if (mins !== null) d.setHours(Math.floor(mins / 60), mins % 60, 0, 0);
+    return d;
+  }
+
+  function closest10(data) {
+    const now = getEasternNow();
+    return data
+      .map(e => ({ entry: e, dt: parseFullDatetime(e.date, e.time) }))
+      .filter(x => x.dt !== null)
+      .sort((a, b) => Math.abs(a.dt - now) - Math.abs(b.dt - now))
+      .slice(0, 10)
+      .map(x => x.entry);
   }
 
   function formatDate(dateStr) {
@@ -712,7 +752,7 @@
 
   function changeMonth(dir) {
     currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + dir, 1);
-    renderCalendar(entries);
+    renderCalendar(closest10(entries));
   }
 
   renderCalendar([]);
