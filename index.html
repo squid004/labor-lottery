@@ -575,9 +575,7 @@
   }
 
   function parseCSV(text) {
-    const lines = text.trim().split(/
-?
-/);
+    const lines = text.trim().split(/\r?\n/);
     const result = [];
     for (let i = 1; i < lines.length; i++) {
       const cols = splitCSVLine(lines[i]);
