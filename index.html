@@ -579,19 +579,21 @@
     const result = [];
     for (let i = 1; i < lines.length; i++) {
       const cols = splitCSVLine(lines[i]);
-      const name = (cols[0] || '').trim();
-      const date = (cols[1] || '').trim();
-      const time = (cols[2] || '').trim();
-      if (!name || !date || name.toLowerCase() === 'name') continue;
-      result.push({ name, date, time });
+      const name = (cols[1] || '').trim();
+      if (!name || name.toLowerCase() === 'full name') continue;
+      for (const [di, ti] of [[2,3],[4,5],[6,7]]) {
+        const date = (cols[di] || '').trim();
+        const time = (cols[ti] || '').trim();
+        if (date) result.push({ name, date, time });
+      }
     }
     return result;
   }
 
   async function loadData() {
     const urls = [
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`,
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=1604495024`,
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=1604495024`
     ];
     for (const url of urls) {
       try {
