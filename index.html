@@ -601,8 +601,8 @@
         if (!text || text.includes('<!DOCTYPE')) continue;
         entries = parseCSV(text);
         updateStats(entries);
-        renderTable(closest10(entries));
-        renderCalendar(closest10(entries));
+        renderTable(next10(entries));
+        renderCalendar(entries);
         document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
         return;
       } catch(e) {
@@ -672,12 +672,12 @@
     return d;
   }
 
-  function closest10(data) {
+  function next10(data) {
     const now = getEasternNow();
     return data
       .map(e => ({ entry: e, dt: parseFullDatetime(e.date, e.time) }))
-      .filter(x => x.dt !== null)
-      .sort((a, b) => Math.abs(a.dt - now) - Math.abs(b.dt - now))
+      .filter(x => x.dt !== null && x.dt >= now)
+      .sort((a, b) => a.dt - b.dt)
       .slice(0, 10)
       .map(x => x.entry);
   }
@@ -752,7 +752,7 @@
 
   function changeMonth(dir) {
     currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + dir, 1);
-    renderCalendar(closest10(entries));
+    renderCalendar(entries);
   }
 
   renderCalendar([]);
