@@ -13,14 +13,14 @@
   <div class="header-inner">
     <p class="header-eyebrow">Est. 2026 · Pittsburgh, PA</p>
     <h1 class="header-title">Delivery<br><span>Derby</span></h1>
-    <p class="header-subtitle">Wager on when Charlie will arrive!</p>
-    <p class="header-deadline">⚑ Betting closes May 31st or the moment we leave for the hospital — whichever comes first</p>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSddP5wwhjyDBhAHshZdMHF76Ht-229nlDBVoOTiW3kDH5L6Gg/viewform" target="_blank" class="header-cta">Enter the Derby &rarr;</a>
-    <a href="https://venmo.com/u/jhardy004" target="_blank" class="header-venmo">Pay via Venmo @jhardy004</a>
+    <p class="header-subtitle" id="header-subtitle">Wager on when Charlie will arrive!</p>
+    <p class="header-deadline" id="header-deadline">⚑ Betting closes May 31st or the moment we leave for the hospital — whichever comes first</p>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSddP5wwhjyDBhAHshZdMHF76Ht-229nlDBVoOTiW3kDH5L6Gg/viewform" target="_blank" class="header-cta" id="header-cta">Enter the Derby &rarr;</a>
+    <a href="https://venmo.com/u/jhardy004" target="_blank" class="header-venmo" id="header-venmo">Pay via Venmo @jhardy004</a>
   </div>
 </header>
 
-<div class="info-strip">
+<div class="info-strip" id="info-strip">
   <div class="info-item">
     <p class="info-label">Entry fee</p>
     <p class="info-value big">$10 per guess</p>
@@ -56,8 +56,50 @@
 
 <main class="main">
 
-  <!-- CALENDAR -->
-  <section>
+  <!-- WINNER MODE SECTIONS (hidden until WINNER_MODE = true) -->
+  <section id="section-winner" style="display:none">
+    <div class="winner-card">
+      <p class="winner-eyebrow">Charlie has arrived!</p>
+      <div class="winner-birth-row">
+        <div class="winner-birth-item">
+          <p class="winner-birth-label">Date of birth</p>
+          <p class="winner-birth-value" id="birth-date-display">—</p>
+        </div>
+        <div class="winner-birth-divider"></div>
+        <div class="winner-birth-item">
+          <p class="winner-birth-label">Time of birth</p>
+          <p class="winner-birth-value" id="birth-time-display">—</p>
+        </div>
+      </div>
+      <div class="winner-trophy">🏆</div>
+      <p class="winner-name" id="winner-name">—</p>
+      <p class="winner-detail" id="winner-detail">—</p>
+      <p class="winner-payout" id="winner-payout">—</p>
+    </div>
+  </section>
+
+  <section id="section-results" class="entries-section" style="display:none">
+    <div class="section-header">
+      <h2 class="section-title">Final Results</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Guess</th>
+            <th>Off by</th>
+          </tr>
+        </thead>
+        <tbody id="results-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- NORMAL MODE SECTIONS -->
+  <section id="section-calendar">
     <div class="section-header">
       <h2 class="section-title">Guess Calendar</h2>
       <div class="section-line"></div>
@@ -72,8 +114,7 @@
     </div>
   </section>
 
-  <!-- LEADERBOARD -->
-  <section class="entries-section">
+  <section id="section-leaderboard" class="entries-section">
     <div class="section-header">
       <h2 class="section-title">Leaderboard</h2>
       <div class="section-line"></div>
@@ -95,8 +136,7 @@
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section class="faq-section">
+  <section id="section-faq" class="faq-section">
     <div class="section-header">
       <h2 class="section-title">FAQ</h2>
       <div class="section-line"></div>

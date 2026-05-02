@@ -1,4 +1,13 @@
 const SHEET_ID = '1qi-c7I46d9lMgPD4sf4Oamo1aLeKwNZ2m-u2d6JqoP4';
+
+// ── WINNER MODE ──────────────────────────────────────────────────────────────
+// Set WINNER_MODE to true and fill in BIRTH_DATETIME when Charlie arrives.
+// Months are 0-indexed: Jan=0, Feb=1, ... Jun=5, Jul=6
+// new Date(year, month, day, hour, minute)  ← all Eastern time
+const WINNER_MODE = false;
+const BIRTH_DATETIME = null; // e.g. new Date(2026, 5, 14, 8, 32) = June 14 at 8:32 AM ET
+// ─────────────────────────────────────────────────────────────────────────────
+
 let entries = [];
 let currentMonth = new Date(2026, 5, 1);
 
@@ -44,8 +53,12 @@ async function loadData() {
       if (!text || text.includes('<!DOCTYPE')) continue;
       entries = parseCSV(text);
       updateStats(entries);
-      renderTable(next10(entries));
-      renderCalendar(entries);
+      if (WINNER_MODE && BIRTH_DATETIME) {
+        renderWinnerMode(entries);
+      } else {
+        renderTable(next10(entries));
+        renderCalendar(entries);
+      }
       document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
       return;
     } catch(e) {
@@ -204,5 +217,62 @@ function changeMonth(dir) {
   renderCalendar(entries);
 }
 
-renderCalendar([]);
+function timeDiffStr(dtA, dtB) {
+  const totalMins = Math.round(Math.abs(dtA - dtB) / 60000);
+  if (totalMins < 60) return totalMins + ' min';
+  const hours = Math.floor(totalMins / 60);
+  const mins = totalMins % 60;
+  if (hours < 24) return hours + 'h ' + mins + 'm';
+  const days = Math.floor(hours / 24);
+  return days + 'd ' + (hours % 24) + 'h';
+}
+
+function renderWinnerMode(entries) {
+  // Hide normal-mode elements
+  ['header-deadline','header-cta','header-venmo','info-strip',
+   'section-calendar','section-leaderboard','section-faq'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  document.getElementById('header-subtitle').textContent = 'Charlie has arrived!';
+
+  // Show winner-mode sections
+  document.getElementById('section-winner').style.display = 'block';
+  document.getElementById('section-results').style.display = 'block';
+
+  // Birth date/time display
+  document.getElementById('birth-date-display').textContent =
+    BIRTH_DATETIME.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' });
+  document.getElementById('birth-time-display').textContent =
+    BIRTH_DATETIME.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
+
+  // Sort all entries by closeness to birth
+  const ranked = entries
+    .map(e => ({ entry: e, dt: parseFullDatetime(e.date, e.time) }))
+    .filter(x => x.dt !== null)
+    .sort((a, b) => Math.abs(a.dt - BIRTH_DATETIME) - Math.abs(b.dt - BIRTH_DATETIME));
+
+  if (ranked.length) {
+    const winner = ranked[0].entry;
+    const winnerDt = ranked[0].dt;
+    const payout = Math.floor(entries.length * 10 * 0.75);
+    document.getElementById('winner-name').textContent = winner.name;
+    document.getElementById('winner-detail').textContent =
+      'Guessed ' + formatDate(winner.date) + ' at ' + formatTime(winner.time) +
+      ' — ' + timeDiffStr(winnerDt, BIRTH_DATETIME) + ' off';
+    document.getElementById('winner-payout').textContent = '$' + payout + ' winner\'s payout';
+  }
+
+  // Final results table
+  document.getElementById('results-tbody').innerHTML = ranked.map((x, i) => `
+    <tr class="${i === 0 ? 'winner-row' : ''}">
+      <td class="rank-cell">${i + 1}</td>
+      <td><strong>${x.entry.name}</strong></td>
+      <td>${formatDate(x.entry.date)} · ${formatTime(x.entry.time)}</td>
+      <td class="time-cell">${timeDiffStr(x.dt, BIRTH_DATETIME)}</td>
+    </tr>
+  `).join('');
+}
+
+if (!WINNER_MODE) renderCalendar([]);
 loadData();
