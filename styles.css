@@ -98,23 +98,23 @@ body {
 .header-cta:hover { opacity: 0.85; }
 
 .header-venmo {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  color: rgba(232,247,245,0.6);
-  margin-bottom: 40px;
-}
-
-.header-venmo a {
+  display: inline-block;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  background: transparent;
   color: var(--cream);
+  padding: 7px 20px;
+  border-radius: 4px;
+  border: 2px solid rgba(232,247,245,0.4);
   text-decoration: none;
-  border-bottom: 1px solid rgba(232,247,245,0.4);
-  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: 40px;
+  transition: border-color 0.15s, color 0.15s;
 }
 
-.header-venmo a:hover {
+.header-venmo:hover {
+  border-color: var(--gold);
   color: var(--gold);
-  border-bottom-color: var(--gold);
 }
 
 /* ── INFO STRIP ── */
