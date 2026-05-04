@@ -399,6 +399,96 @@ tbody td {
   font-size: 15px;
 }
 
+.view-all-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(27,64,64,0.5);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.view-all-link:hover { color: var(--dark); }
+
+/* ── DAY MODAL ── */
+.day-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(27,64,64,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+}
+
+.day-modal-card {
+  background: var(--card);
+  border: 2px solid var(--dark);
+  border-radius: 4px;
+  width: 100%;
+  max-width: 360px;
+  overflow: hidden;
+}
+
+.day-modal-header {
+  background: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+}
+
+.day-modal-date {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+
+.day-modal-close {
+  background: none;
+  border: none;
+  color: rgba(232,247,245,0.6);
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.day-modal-close:hover { color: var(--cream); }
+
+.day-modal-list {
+  list-style: none;
+  padding: 8px 0;
+}
+
+.day-modal-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.day-modal-entry:last-child { border-bottom: none; }
+
+.day-modal-name {
+  font-family: 'Lora', serif;
+  font-size: 15px;
+  color: var(--dark);
+  font-weight: 600;
+}
+
+.day-modal-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: rgba(27,64,64,0.5);
+}
+
 /* ── FAQ ── */
 .faq-section { margin-top: 48px; }
 

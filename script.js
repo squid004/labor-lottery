@@ -194,10 +194,38 @@ function renderCalendar(data) {
       '<div class="cal-entry" title="' + e.name + ' — ' + (e.time || 'TBD') + '">' + e.name + '</div>'
     ).join('');
     const dueHtml = isDue ? '<div class="due-marker">Due date</div>' : '';
-    html += '<div class="' + cls + '" data-count="' + dayEntries.length + '"><div class="cal-date">' + day + '</div><div class="cal-entries">' + dueHtml + entriesHtml + '</div></div>';
+    const clickAttr = dayEntries.length ? ' onclick="showDayModal(' + year + ',' + month + ',' + day + ')" style="cursor:pointer"' : '';
+    html += '<div class="' + cls + '"' + clickAttr + ' data-count="' + dayEntries.length + '"><div class="cal-date">' + day + '</div><div class="cal-entries">' + dueHtml + entriesHtml + '</div></div>';
   }
   grid.innerHTML = html;
 }
+
+function showDayModal(year, month, day) {
+  const dayEntries = entries.filter(e => {
+    const d = parseEntryDate(e.date);
+    return d && d.getFullYear() === year && d.getMonth() === month && d.getDate() === day;
+  });
+  if (!dayEntries.length) return;
+  const dateStr = new Date(year, month, day).toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  document.getElementById('day-modal-date').textContent = dateStr;
+  document.getElementById('day-modal-list').innerHTML = dayEntries.map(e => `
+    <li class="day-modal-entry">
+      <span class="day-modal-name">${e.name}</span>
+      <span class="day-modal-time">${formatTime(e.time)}</span>
+    </li>
+  `).join('');
+  document.getElementById('day-modal').style.display = 'flex';
+}
+
+function closeDayModal(event) {
+  if (!event || event.target === document.getElementById('day-modal')) {
+    document.getElementById('day-modal').style.display = 'none';
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('day-modal').style.display = 'none';
+});
 
 function changeMonth(dir) {
   currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + dir, 1);

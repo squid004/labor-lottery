@@ -93,6 +93,7 @@
         </tbody>
       </table>
     </div>
+    <a href="https://docs.google.com/spreadsheets/d/1qi-c7I46d9lMgPD4sf4Oamo1aLeKwNZ2m-u2d6JqoP4" target="_blank" class="view-all-link">View all entries &rarr;</a>
   </section>
 
   <!-- FAQ -->
@@ -130,6 +131,16 @@
   </section>
 
 </main>
+
+<div id="day-modal" class="day-modal-overlay" style="display:none" onclick="closeDayModal(event)">
+  <div class="day-modal-card">
+    <div class="day-modal-header">
+      <span class="day-modal-date" id="day-modal-date"></span>
+      <button class="day-modal-close" onclick="closeDayModal()">&times;</button>
+    </div>
+    <ul class="day-modal-list" id="day-modal-list"></ul>
+  </div>
+</div>
 
 <footer class="footer">
   <p>Delivery Derby · <span>Shannon's Big Day</span> · Data refreshes on page load · Last loaded: <span id="last-updated">—</span></p>
